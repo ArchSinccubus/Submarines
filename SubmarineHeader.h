@@ -8,8 +8,9 @@ public:
 
 	Player player1, player2;
 	Player* CurrPlayer;
+	bool isPickPhaseOver = false;
+	bool isGameOver = false;
 
-	void InitializePlayers(void);
 	void StartGame(void);
 
 };
@@ -17,20 +18,21 @@ public:
 class Player
 {
 public:
+
 	int Ships;
 	int Score;
-
-	void InitializePlayer(void);
 
 };
 
 class Board
 {
 public:
-	bool board[10][10];
+	int board[10][10];
 
 	bool CheckBoard(void);
-	void DrawBoard(bool[10][10]);
+
+	// Array of int where 0 = Empty, 1 = Ship, 2 = Destroyed.
+	void DrawBoard(int [10][10]);
 
 };
 
@@ -38,7 +40,10 @@ class Ship
 {
 public:
 	// Number of cells a ship takes.
-	const int ShipLength = 4;
+	const int ShortShip = 3;
+	const int MediumShip = 4;
+	const int LongShip = 5;
+
 	// If true, ship is horizontal. 
 	// If false, ship is vertical.
 	bool ShipOriantation;
