@@ -1,2 +1,4 @@
 ﻿  SubmarineSource.cpp
+C:\Repos\1. Repos\Dev Repos\4. Visual Studio\Battleship C++\Submarines\SubmarineSource.cpp(147,13): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Repos\1. Repos\Dev Repos\4. Visual Studio\Battleship C++\Submarines\SubmarineSource.cpp(267,13): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   Submarines.vcxproj -> C:\Repos\1. Repos\Dev Repos\4. Visual Studio\Battleship C++\Submarines\Debug\Submarines.exe
