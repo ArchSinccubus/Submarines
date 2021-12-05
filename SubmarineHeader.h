@@ -1,50 +1,56 @@
 #pragma once
+#include <string>
 
-#define BOARD_SIZE 10;
+constexpr auto BOARD_SIZE = 10;
 
-class Game
+class Board
 {
 public:
+	// Array of int where 0 = Empty, 1 = Ship, 2 = Destroyed.
+	char board[BOARD_SIZE][BOARD_SIZE];
 
-	Player player1, player2;
-	Player* CurrPlayer;
-	bool isPickPhaseOver = false;
-	bool isGameOver = false;
-
-	void StartGame(void);
-
+	Board();
+	bool CheckPlacementValidity(int, int, int, int);
 };
 
 class Player
 {
 public:
-
 	int Ships;
 	int Score;
+	bool PC;
+
+	Player();
+	Board board;
 
 };
 
-class Board
+class Game
 {
+private:
+	int xCoordinate, yCoordinate;
+    std::string direction;
+	bool PC;
+	int shipArray[5] = { 2,3,3,4,5 };
+
 public:
-	int board[10][10];
 
-	bool CheckBoard(void);
+	Player player1, player2;
+	Player* CurrPlayer;
+	Player* OtherPlayer;
+	bool isPickPhaseOver = false;
+	bool isGameOver = false;
 
-	// Array of int where 0 = Empty, 1 = Ship, 2 = Destroyed.
-	void DrawBoard(int [10][10]);
-
+	Game();
+	void StartGame(void);
+	bool CheckVictory(void);
+	void StartPickPhase(Player player, bool PC);
+	void ResetBoardPlayer(Player player);
+	void DrawBoardPlayer(Player player);
+	void SwitchPlayer(void);
 };
 
-class Ship
-{
-public:
-	// Number of cells a ship takes.
-	const int ShortShip = 3;
-	const int MediumShip = 4;
-	const int LongShip = 5;
 
-	// If true, ship is horizontal. 
-	// If false, ship is vertical.
-	bool ShipOriantation;
-};
+
+
+
