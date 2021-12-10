@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <Windows.h>
+#include <random>
 #include "SubmarineHeader.h"
 
 using namespace std;
@@ -22,7 +23,7 @@ bool Board::CheckPlacementValidity(int x, int y,int dir, int length)
 {
 	for (size_t i = 0; i < length; i++)
 	{
-		if (board[x + (i * dir)][y + (i * (1 - dir))] == 'X')
+		if (board[y + (i * (1 - dir))][x + (i * dir)] == 'X')
 		{
 			return false;
 		}
@@ -48,8 +49,18 @@ Game::Game()
 
 void Game::StartGame(void)
 {
-	StartPickPhase(player1, false);
-	StartPickPhase(player2, true);
+	StartPickPhase(&player1, false);
+	StartPickPhase(&player2, true);
+	/*DrawBoardPlayer(&player2);
+
+	system("pause");
+	*/
+	
+
+
+
+	cout << "Both you and the PC finished setting up your boards!\n";
+	system("pause");
 
 	isGameOver = false;
 
@@ -59,7 +70,7 @@ void Game::StartGame(void)
 
 		cout << endl;
 
-		DrawBoardPlayer(player1);
+		DrawBoardPlayer(&player1);
 
 		cout << endl;
 
@@ -67,7 +78,7 @@ void Game::StartGame(void)
 
 		cout << endl;
 
-		DrawBoardPlayer(player2);
+		DrawBoardPlayer(&player2);
 
 		if (!CurrPlayer->PC)
 		{
@@ -158,11 +169,12 @@ bool Game::CheckVictory(void)
 	return true;
 }
 
-void Game::StartPickPhase(Player player, bool PC)
+void Game::StartPickPhase(Player* player, bool PC)
 {
 	bool PlacedSuccessfully;
 	PlacedSuccessfully = false;
-	player.PC = PC;
+	int PCDir;
+	player->PC = PC;
 
 	for (int i = 0; i < sizeof(shipArray) / sizeof(int); i++)
 	{
@@ -183,11 +195,12 @@ void Game::StartPickPhase(Player player, bool PC)
 
 				do
 				{
-					cout << "\nInput the X coordinate for the ship (Numbers between 0 and " << (10 - this->shipArray[i]) << "):\n" << endl;
+
+					cout << "\nInput the X coordinate for the ship:\n" << endl;
 
 					cin >> xCoordinate;
 
-					while (!cin || !(xCoordinate >= 0 && xCoordinate <= (10 - this->shipArray[i])))
+					while (!cin || !(xCoordinate >= 0 && xCoordinate <= 9))
 					{
 						cout << "Please enter a valid input\n" << endl;
 						cin.clear();
@@ -198,11 +211,11 @@ void Game::StartPickPhase(Player player, bool PC)
 
 					cout << endl;
 
-					cout << "Input the Y coordinate for the ship (Numbers between 0 and " << (10 - this->shipArray[i]) << "):\n" << endl;
+					cout << "Input the Y coordinate for the ship:\n" << endl;
 
 					cin >> yCoordinate;
 
-					while (!cin || !(yCoordinate >= 0 && yCoordinate <= (10 - this->shipArray[i])))
+					while (!cin || !(yCoordinate >= 0 && yCoordinate <= 9))
 					{
 						cout << "Please enter a valid input\n" << endl;
 						cin.clear();
@@ -211,12 +224,12 @@ void Game::StartPickPhase(Player player, bool PC)
 						cin >> yCoordinate;
 					}
 
-					if (player.board.board[xCoordinate][yCoordinate] == 'X')
+					if (player->board.board[yCoordinate][xCoordinate] == 'X')
 					{
 						cout << "This spot already has a ship in it! Please try another spot.\n";
 					}
 					cout << endl;
-				} while (player.board.board[xCoordinate][yCoordinate] == 'X');
+				} while (player->board.board[yCoordinate][xCoordinate] == 'X');
 			}
 			else
 			{
@@ -224,43 +237,54 @@ void Game::StartPickPhase(Player player, bool PC)
 
 				do
 				{
-					xCoordinate = rand() % 9 + 0;
-					yCoordinate = rand() % 9 + 0;
-				} while (player.board.board[xCoordinate][yCoordinate] == 'X');
+					xCoordinate = rand() % 10 + 0;
+					yCoordinate = rand() % 10 + 0;
+				} while (player->board.board[yCoordinate][xCoordinate] == 'X');
 			}
 
 
 			do
 			{
-				cout << "Vertical or horizontal? Type H / V: \n" << endl;
+				if (!PC)
+				{
+					cout << "Vertical or horizontal? Type H / V: \n" << endl;
 
-				cin >> direction;
+					cin >> direction;
 
-				cout << endl;
+					cout << endl;
+				}
+				else
+				{
+					srand(time(NULL));
+					PCDir = rand() % 2;
 
-					if ((direction == 'V' || direction == 'v') && (xCoordinate + this->shipArray[i] < BOARD_SIZE) && player.board.CheckPlacementValidity(xCoordinate, yCoordinate, 1, this->shipArray[i]))
+					direction = PCDir ? 'H' : 'V';
+
+				}
+
+					if ((direction == 'V' || direction == 'v') && (yCoordinate + this->shipArray[i] <= BOARD_SIZE) && player->board.CheckPlacementValidity(xCoordinate, yCoordinate, 1, this->shipArray[i]))
 					{
 						for (size_t j = 0; j < this->shipArray[i]; j++)
 						{
-							if (player.board.board[xCoordinate + j][yCoordinate] == '.')
+							if (player->board.board[yCoordinate + j][xCoordinate] == '.')
 							{
-								player.board.board[xCoordinate + j][yCoordinate] = 'X';
+								player->board.board[yCoordinate + j][xCoordinate] = 'X';
 							}
 						}
 						PlacedSuccessfully = true;
 					}
-					else if ((direction == 'H' || direction == 'h') && (yCoordinate + this->shipArray[i] < BOARD_SIZE) && player.board.CheckPlacementValidity(xCoordinate, yCoordinate, 0, this->shipArray[i]))
+					else if ((direction == 'H' || direction == 'h') && (xCoordinate + this->shipArray[i] <= BOARD_SIZE) && player->board.CheckPlacementValidity(xCoordinate, yCoordinate, 0, this->shipArray[i]))
 					{
 						for (size_t j = 0; j < this->shipArray[i]; j++)
 						{
-							if (player.board.board[xCoordinate][yCoordinate + j] == '.')
+							if (player->board.board[yCoordinate][xCoordinate + j] == '.')
 							{
-								player.board.board[xCoordinate][yCoordinate + j] = 'X';
+								player->board.board[yCoordinate][xCoordinate + j] = 'X';
 							}
 						}
 						PlacedSuccessfully = true;
 					}
-					else
+					else if(!PC)
 					{
 						if (!(direction == 'H' || direction == 'V' || direction == 'h' || direction == 'v'))
 						{
@@ -268,7 +292,7 @@ void Game::StartPickPhase(Player player, bool PC)
 						}
 						else
 						{
-							cout << "The ship you want to place already overlaps another ship! Please try again.\n" << endl;
+							cout << "The ship you want to place is invalid! Please try again.\n" << endl;
 							PlacedSuccessfully = false;
 							system("pause");
 						}
@@ -281,19 +305,19 @@ void Game::StartPickPhase(Player player, bool PC)
 
 }
 
-void Game::ResetBoardPlayer(Player player)
+void Game::ResetBoardPlayer(Player* player)
 {
 	for (int x = 0; x < BOARD_SIZE; x++)
 	{
 		for (int y = 0; y < BOARD_SIZE; y++)
 		{
-			player.board.board[x][y] = 0;
+			player->board.board[x][y] = 0;
 		}
 	}
 }
 
 
-void Game::DrawBoardPlayer(Player player)
+void Game::DrawBoardPlayer(Player* player)
 {
 	cout << "    ";
 
@@ -319,13 +343,17 @@ void Game::DrawBoardPlayer(Player player)
 
 		for (int j = 0; j < BOARD_SIZE; j++)
 		{
-			if (player.PC && player.board.board[i][j] == 'X')
+			
+			//cout << player->board.board[i][j] << " ";
+
+			/**/
+			if (player->PC && player->board.board[i][j] == 'X')
 			{
 				cout << '.' << " ";
 			}
 			else
 			{
-				cout << player.board.board[i][j] << " ";
+				cout << player->board.board[i][j] << " ";
 			}
 
 		}

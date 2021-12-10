@@ -44,9 +44,9 @@ public:
 	Game();
 	void StartGame(void);
 	bool CheckVictory(void);
-	void StartPickPhase(Player player, bool PC);
-	void ResetBoardPlayer(Player player);
-	void DrawBoardPlayer(Player player);
+	void StartPickPhase(Player* player, bool PC);
+	void ResetBoardPlayer(Player* player);
+	void DrawBoardPlayer(Player* player);
 	void SwitchPlayer(void);
 };
 
