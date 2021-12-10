@@ -29,7 +29,7 @@ class Game
 {
 private:
 	int xCoordinate, yCoordinate;
-    std::string direction;
+    char direction;
 	bool PC;
 	int shipArray[5] = { 2,3,3,4,5 };
 

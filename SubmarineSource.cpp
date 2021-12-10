@@ -22,12 +22,12 @@ bool Board::CheckPlacementValidity(int x, int y,int dir, int length)
 {
 	for (size_t i = 0; i < length; i++)
 	{
-		if (board[x + (i * dir)][y + (i * (1 - dir))] != '.')
+		if (board[x + (i * dir)][y + (i * (1 - dir))] == 'X')
 		{
-			return true;
+			return false;
 		}
 	}
-	return false;
+	return true;
 }
 
 Player::Player()
@@ -40,7 +40,7 @@ Player::Player()
 
 Game::Game()
 {
-	direction = "";
+	direction = '\0';
 	CurrPlayer = &player1;
 	OtherPlayer = &player2;
 }
@@ -160,83 +160,122 @@ bool Game::CheckVictory(void)
 
 void Game::StartPickPhase(Player player, bool PC)
 {
+	bool PlacedSuccessfully;
+	PlacedSuccessfully = false;
 	player.PC = PC;
 
-	for (int i = 0; i < sizeof(shipArray); i++)
+	for (int i = 0; i < sizeof(shipArray) / sizeof(int); i++)
 	{
-		if (!PC)
+		PlacedSuccessfully = false;
+		while (!PlacedSuccessfully)
 		{
-			cout << endl;
+			if (!PC)
+			{
+				system("CLS");
 
-			DrawBoardPlayer(player);
+				cout << endl;
 
-			cout << endl;
+				DrawBoardPlayer(player);
 
-			cout << "You are placing a ship, with the length: " << this->shipArray[i] << endl;
+				cout << endl;
 
-			cout << "\nInput the X coordinate for the ship: \n" << endl;
+				cout << "You are placing a ship, with the length: " << this->shipArray[i] << endl;
 
-			cin >> xCoordinate;
-
-			cout << endl;
-
-			cout << "Input the Y coordinate for the ship: \n" << endl;
-
-			cin >> yCoordinate;
-
-			cout << endl;
-		}
-		else
-		{
-			srand(time(NULL));
-
-			xCoordinate = rand() % 9 + 0;
-			yCoordinate = rand() % 9 + 0;
-		}
-
-		for (;;) {
-			cout << "Vertical or horizontal? Type H / V: \n" << endl;
-
-			cin >> direction;
-
-			cout << endl;
-
-			if (direction == "H" || direction == "V" || direction == "h" || direction == "v") {
-
-				if (direction == "H" || direction == "h" && xCoordinate + this->shipArray[i] < BOARD_SIZE && player.board.CheckPlacementValidity(xCoordinate, yCoordinate, true, this->shipArray[i]))
+				do
 				{
-					for (size_t i = 0; i < this->shipArray[i]; i++)
-					{
-						if (player.board.board[xCoordinate + i][yCoordinate] == '.')
-						{
-							player.board.board[xCoordinate + i][yCoordinate] = 'X';
-						}
-					}
-				}
-				else if (direction == "V" || direction == "v" && yCoordinate + this->shipArray[i] < BOARD_SIZE && player.board.CheckPlacementValidity(xCoordinate, yCoordinate, false, this->shipArray[i]))
-				{
-					for (size_t i = 0; i < this->shipArray[i]; i++)
-					{
-						if (player.board.board[xCoordinate][yCoordinate + i] == '.')
-						{
-							player.board.board[xCoordinate][yCoordinate + i] = 'X';
-						}
-					}
-				}
+					cout << "\nInput the X coordinate for the ship (Numbers between 0 and " << (10 - this->shipArray[i]) << "):\n" << endl;
 
-				break;
+					cin >> xCoordinate;
 
+					while (!cin || !(xCoordinate >= 0 && xCoordinate <= (10 - this->shipArray[i])))
+					{
+						cout << "Please enter a valid input\n" << endl;
+						cin.clear();
+						cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+
+						cin >> xCoordinate;
+					}
+
+					cout << endl;
+
+					cout << "Input the Y coordinate for the ship (Numbers between 0 and " << (10 - this->shipArray[i]) << "):\n" << endl;
+
+					cin >> yCoordinate;
+
+					while (!cin || !(yCoordinate >= 0 && yCoordinate <= (10 - this->shipArray[i])))
+					{
+						cout << "Please enter a valid input\n" << endl;
+						cin.clear();
+						cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+
+						cin >> yCoordinate;
+					}
+
+					if (player.board.board[xCoordinate][yCoordinate] == 'X')
+					{
+						cout << "This spot already has a ship in it! Please try another spot.\n";
+					}
+					cout << endl;
+				} while (player.board.board[xCoordinate][yCoordinate] == 'X');
 			}
-			else {
+			else
+			{
+				srand(time(NULL));
 
-				cout << "Please enter a valid string\n" << endl;
-				cin.clear();
-				//cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
+				do
+				{
+					xCoordinate = rand() % 9 + 0;
+					yCoordinate = rand() % 9 + 0;
+				} while (player.board.board[xCoordinate][yCoordinate] == 'X');
 			}
 
-		}
 
+			do
+			{
+				cout << "Vertical or horizontal? Type H / V: \n" << endl;
+
+				cin >> direction;
+
+				cout << endl;
+
+					if ((direction == 'V' || direction == 'v') && (xCoordinate + this->shipArray[i] < BOARD_SIZE) && player.board.CheckPlacementValidity(xCoordinate, yCoordinate, 1, this->shipArray[i]))
+					{
+						for (size_t j = 0; j < this->shipArray[i]; j++)
+						{
+							if (player.board.board[xCoordinate + j][yCoordinate] == '.')
+							{
+								player.board.board[xCoordinate + j][yCoordinate] = 'X';
+							}
+						}
+						PlacedSuccessfully = true;
+					}
+					else if ((direction == 'H' || direction == 'h') && (yCoordinate + this->shipArray[i] < BOARD_SIZE) && player.board.CheckPlacementValidity(xCoordinate, yCoordinate, 0, this->shipArray[i]))
+					{
+						for (size_t j = 0; j < this->shipArray[i]; j++)
+						{
+							if (player.board.board[xCoordinate][yCoordinate + j] == '.')
+							{
+								player.board.board[xCoordinate][yCoordinate + j] = 'X';
+							}
+						}
+						PlacedSuccessfully = true;
+					}
+					else
+					{
+						if (!(direction == 'H' || direction == 'V' || direction == 'h' || direction == 'v'))
+						{
+							cout << "Please enter valid input.\n" << endl;
+						}
+						else
+						{
+							cout << "The ship you want to place already overlaps another ship! Please try again.\n" << endl;
+							PlacedSuccessfully = false;
+							system("pause");
+						}
+					}
+
+			} while (!(cin && (direction == 'H' || direction == 'V' || direction == 'h' || direction == 'v')));
+		}
 	}
 
 
