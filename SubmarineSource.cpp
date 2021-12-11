@@ -154,6 +154,17 @@ void Game::StartGame(void)
 		isGameOver = CheckVictory();
 		SwitchPlayer();
 	}
+
+	if (OtherPlayer->PC)
+	{
+		cout << "The PC has won! The game is finished.";
+	}
+	else
+	{
+		cout << "You won, congratulations! The game is finished.";
+	}
+
+	system("pause");
 }
 
 bool Game::CheckVictory(void)
@@ -376,6 +387,9 @@ void Game::SwitchPlayer(void)
 
 int main()
 {
+	cout << "Welcome to Battleships! Press any key to start the game against a PC opponent!";
+	system("pause");
+
 	Game* game = new(Game);
 
 
