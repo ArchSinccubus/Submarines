@@ -1,5 +1,5 @@
 ﻿  SubmarineSource.cpp
-C:\Users\Orsula\source\repos\Submarines\Submarines\SubmarineSource.cpp(107,14): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\Orsula\source\repos\Submarines\Submarines\SubmarineSource.cpp(235,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\Orsula\source\repos\Submarines\Submarines\SubmarineSource.cpp(257,16): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Orsula\source\repos\Submarines\Submarines\SubmarineSource.cpp(111,14): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Orsula\source\repos\Submarines\Submarines\SubmarineSource.cpp(239,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Orsula\source\repos\Submarines\Submarines\SubmarineSource.cpp(261,16): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   Submarines.vcxproj -> C:\Users\Orsula\source\repos\Submarines\x64\Debug\Submarines.exe

@@ -66,22 +66,25 @@ void Game::StartGame(void)
 
 	while (!isGameOver)
 	{
-		cout << "Your Board - " << endl;
-
-		cout << endl;
-
-		DrawBoardPlayer(&player1);
-
-		cout << endl;
-
-		cout << "PC Board - " << endl;
-
-		cout << endl;
-
-		DrawBoardPlayer(&player2);
-
 		if (!CurrPlayer->PC)
 		{
+			system("CLS");
+
+			cout << "Your Board - " << endl;
+
+			cout << endl;
+
+			DrawBoardPlayer(&player1);
+
+			cout << endl;
+
+			cout << "PC Board - " << endl;
+
+			cout << endl;
+
+			DrawBoardPlayer(&player2);
+
+
 			cout << endl;
 
 			cout << "Input the X coordinate of missile:\n" << endl;
@@ -99,23 +102,23 @@ void Game::StartGame(void)
 		else
 		{
 			cout << "The PC is thinking...\n" << endl;
-			for (size_t i = 0; i < 3; i++)
+			for (size_t i = 0; i < 4; i++)
 			{
 				Sleep(1000);
-				cout << "." << endl;
+				cout << ".";
 			}
 
 			srand(time(NULL));
 
-			xCoordinate = rand() % 9 + 0;
-			yCoordinate = rand() % 9 + 0;
+			xCoordinate = rand() % BOARD_SIZE + 0;
+			yCoordinate = rand() % BOARD_SIZE + 0;
 
 		}
 
 
-		if (OtherPlayer->board.board[xCoordinate][yCoordinate] == 'X')
+		if (OtherPlayer->board.board[yCoordinate][xCoordinate] == 'X')
 		{
-			OtherPlayer->board.board[xCoordinate][yCoordinate] = '#';
+			OtherPlayer->board.board[yCoordinate][xCoordinate] = '#';
 
 			cout << endl;
 
@@ -133,12 +136,12 @@ void Game::StartGame(void)
 		}
 		else
 		{
-			if (OtherPlayer->board.board[xCoordinate][yCoordinate] == '.')
+			if (OtherPlayer->board.board[yCoordinate][xCoordinate] == '.')
 			{
-				OtherPlayer->board.board[xCoordinate][yCoordinate] = '0';
+				OtherPlayer->board.board[yCoordinate][xCoordinate] = '0';
 			}
 
-			if (!CurrPlayer->PC)
+			if (CurrPlayer->PC)
 			{
 				cout << "The PC missed!\n";
 			}
@@ -148,8 +151,8 @@ void Game::StartGame(void)
 			}
 		}
 
-
 		isGameOver = CheckVictory();
+		SwitchPlayer();
 	}
 }
 
@@ -237,8 +240,8 @@ void Game::StartPickPhase(Player* player, bool PC)
 
 				do
 				{
-					xCoordinate = rand() % 10 + 0;
-					yCoordinate = rand() % 10 + 0;
+					xCoordinate = rand() % BOARD_SIZE + 0;
+					yCoordinate = rand() % BOARD_SIZE + 0;
 				} while (player->board.board[yCoordinate][xCoordinate] == 'X');
 			}
 
@@ -262,7 +265,7 @@ void Game::StartPickPhase(Player* player, bool PC)
 
 				}
 
-					if ((direction == 'V' || direction == 'v') && (yCoordinate + this->shipArray[i] <= BOARD_SIZE) && player->board.CheckPlacementValidity(xCoordinate, yCoordinate, 1, this->shipArray[i]))
+					if ((direction == 'V' || direction == 'v') && (yCoordinate + this->shipArray[i] <= BOARD_SIZE) && player->board.CheckPlacementValidity(xCoordinate, yCoordinate, false, this->shipArray[i]))
 					{
 						for (size_t j = 0; j < this->shipArray[i]; j++)
 						{
@@ -273,7 +276,7 @@ void Game::StartPickPhase(Player* player, bool PC)
 						}
 						PlacedSuccessfully = true;
 					}
-					else if ((direction == 'H' || direction == 'h') && (xCoordinate + this->shipArray[i] <= BOARD_SIZE) && player->board.CheckPlacementValidity(xCoordinate, yCoordinate, 0, this->shipArray[i]))
+					else if ((direction == 'H' || direction == 'h') && (xCoordinate + this->shipArray[i] <= BOARD_SIZE) && player->board.CheckPlacementValidity(xCoordinate, yCoordinate, true, this->shipArray[i]))
 					{
 						for (size_t j = 0; j < this->shipArray[i]; j++)
 						{
